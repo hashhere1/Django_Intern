@@ -69,4 +69,3 @@ Django is built on the **MVC (Model-View-Controller)** pattern, although in Djan
 
 ---
 
-

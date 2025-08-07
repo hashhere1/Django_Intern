@@ -127,5 +127,141 @@ Django is built on the **MVC (Model-View-Controller)** pattern, although in Djan
 - One-to-many: Collection → Product, Customer → Order, Order → OrderItem, Cart → CartItem  
 - One-to-one: Customer → Address  
 - Many-to-many: Product ↔ Promotion
+---
+## Date: August 7, 2025
+# Task List with Explanations
 
+## Expressions in Django ORM
+
+Django provides several expression types to allow complex queries directly in the ORM.
+
+### • Value
+Used to represent a literal value in queries, often with annotations.
+
+```python
+from django.db.models import Value
+from django.db.models.functions import Concat
+
+# Example: Add static string in a query
+qs = Author.objects.annotate(full_name=Concat('first_name', Value(' '), 'last_name'))
+```
+
+---
+
+### • F
+`F()` expressions are used to refer to model field values directly in queries, allowing operations without fetching them into Python.
+
+```python
+from django.db.models import F
+
+# Example: Increase all product prices by 10
+Product.objects.update(price=F('price') + 10)
+```
+
+---
+
+### • Func
+`Func` allows use of SQL functions within queries.
+
+```python
+from django.db.models import Func
+
+# Example: UPPER SQL function
+Author.objects.annotate(upper_name=Func(F('name'), function='UPPER'))
+```
+
+---
+
+### • Aggregate (Count, Sum, etc.)
+Used to perform calculations on a queryset.
+
+```python
+from django.db.models import Count, Sum
+
+# Example: Total price of all products
+total = Product.objects.aggregate(Sum('price'))
+
+# Example: Number of orders per user
+User.objects.annotate(order_count=Count('orders'))
+```
+
+---
+
+### • ExpressionWrapper
+Used when combining expressions where a specific output field type must be declared.
+
+```python
+from django.db.models import ExpressionWrapper, FloatField
+
+qs = Product.objects.annotate(
+    discounted_price=ExpressionWrapper(F('price') * 0.9, output_field=FloatField())
+)
+```
+
+---
+
+### • Content-type
+Django provides `ContentType` framework for generic relationships across models.
+
+```python
+from django.contrib.contenttypes.models import ContentType
+
+# Get content type of a model
+content_type = ContentType.objects.get_for_model(MyModel)
+```
+
+---
+
+## CRUD Operations
+
+### Insert
+Creating and saving new records:
+
+```python
+product = Product(title='Shirt', price=500)
+product.save()
+```
+
+Or using `create()`:
+
+```python
+Product.objects.create(title='Pant', price=800)
+```
+
+---
+
+### Update
+Updating existing records:
+
+```python
+Product.objects.filter(id=1).update(price=600)
+```
+
+---
+
+### Delete
+Deleting records:
+
+```python
+Product.objects.get(id=1).delete()
+```
+
+---
+
+## Transaction Logic
+
+Transactions ensure a group of operations are atomic (all or nothing).
+
+```python
+from django.db import transaction
+
+with transaction.atomic():
+    order = Order.objects.create(customer=customer)
+    Payment.objects.create(order=order, amount=500)
+    # Any error here rolls back the whole block
+```
+
+Use `transaction.atomic()` to manage database consistency in critical operations.
+
+---
 

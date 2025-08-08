@@ -265,3 +265,48 @@ Use `transaction.atomic()` to manage database consistency in critical operations
 
 ---
 
+## Date- 08 August,2025
+# Django Admin Enhancements
+
+## 1. Added Tag Inline to Product
+- Created `TagInLine` using `GenericTabularInline` for managing tags linked to products.
+- Enabled `autocomplete_fields` for faster tag selection.
+
+## 2. Customized Product Admin
+- **Actions**:
+  - Added `clear_inventory` action to bulk set product inventory to `0`.
+  - Display a success/error message after execution using `self.message_user()`.
+- **Display Fields**:
+  - `collection_title` → Shows related collection name.
+  - `inventory_status` → Displays `"Low"` if inventory < 10, else `"OK"`.
+- **Features**:
+  - Autocomplete for `collection` field.
+  - Search by `title`.
+  - Prepopulate `slug` from `title`.
+  - Inline tag management (`TagInLine`).
+  - Inline editing of `unit_price`.
+  - List filter by `collection` and `last_update`.
+
+## 3. Customized Customer Admin
+- Added `orders` column showing the number of orders placed by the customer.
+- Made order count clickable, linking to filtered order list for that customer.
+- Enabled search by first and last name (case-insensitive, startswith).
+- Annotated queryset with `orders` count using `Count("order")`.
+
+## 4. Customized Collection Admin
+- Added `product_count` column showing the number of products in the collection.
+- Made product count clickable, linking to filtered product list by collection.
+- Enabled search by `title`.
+- Annotated queryset with `product_count` using `Count("product")`.
+
+## 5. Enhanced Order Admin
+- Added `OrderItemInLine` for inline editing of order items within orders.
+- Autocomplete for `product` in order items.
+- Set constraints: `min_num=1`, `max_num=10`, `extra=0` (no empty extra rows).
+- Enabled autocomplete for `customer` in orders.
+
+## 6. Overall Improvements
+- Used `@admin.display(ordering=...)` for sortable custom columns.
+- Used `reverse()` + `urlencode()` + `format_html()` to create clickable links in list displays.
+- Leveraged `list_select_related` to optimize queries for related objects.
+

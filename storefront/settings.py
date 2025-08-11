@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'debug_toolbar',
     'django.contrib.staticfiles',
+    'rest_framework',
     'playground',
     'store',
+    'store_custom',
     'tags',
     'likes',
 ]
@@ -55,6 +57,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': False,
+}
 # Debug Toolbar Configuration
 INTERNAL_IPS = [
     # ...

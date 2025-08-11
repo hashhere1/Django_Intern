@@ -1,22 +1,17 @@
 from django.contrib import admin, messages
 from django.db.models import Count
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.urls import reverse
-from django.utils.html import format_html, urlencode
-
-from tags.models import TaggedItem
+from django.utils.html import format_html
+from django.utils.http import urlencode
 from . models import Collection, Product, Customer, Order
 from . import models
 
 
-class TagInLine(GenericTabularInline):
-    autocomplete_fields = ["tag"]
-    model = TaggedItem
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     actions = ["clear_inventory"]
-    inlines = [TagInLine]
     autocomplete_fields = ["collection"]
     search_fields = ["title"]
     prepopulated_fields = {"slug":["title"]}
@@ -63,7 +58,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            orders=Count("order")
+            product_count=Count("products")
         )
 
 

@@ -309,4 +309,51 @@ Use `transaction.atomic()` to manage database consistency in critical operations
 - Used `@admin.display(ordering=...)` for sortable custom columns.
 - Used `reverse()` + `urlencode()` + `format_html()` to create clickable links in list displays.
 - Leveraged `list_select_related` to optimize queries for related objects.
+---
+## Date- 11th August, 2025
+# Storefront Project Features
 
+Implements a basic storefront API to manage products and collections with CRUD operations, validation, query optimizations, error handling, and clean serialization.
+
+---
+
+## Product Management
+
+- **List Products:** Get all products with related collection.
+- **Create Product:** Add a new product with validation.
+- **Retrieve Product:** Get product details by ID.
+- **Update Product:** Modify an existing product.
+- **Delete Product:** Block deletion if linked to order items.
+
+---
+
+## Collection Management
+
+- **List Collections:** Get all collections with `product_count`.
+- **Create Collection:** Add a new collection.
+- **Retrieve Collection:** Get collection details with `product_count`.
+- **Update Collection:** Modify an existing collection.
+- **Delete Collection:** Block deletion if it contains products.
+
+---
+
+## Serialization
+
+-  **Definition:** Serializes product data, including a calculated `price_with_tax` field.  
+  **Explanation:** Converts product objects into JSON-friendly format and adds extra computed fields.
+- **CollectionSerializer:** Formats collection data with `product_count`.
+
+---
+
+## Query Optimization
+
+- **select_related:** Fetch related collection with products in fewer queries.
+- **annotate + Count:** Calculate product counts efficiently.
+
+---
+
+## Error Handling
+
+- Returns proper HTTP codes and messages for invalid actions  
+  (e.g., deleting a product with orders or a collection with products).
+---

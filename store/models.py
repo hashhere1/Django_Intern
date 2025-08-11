@@ -8,11 +8,11 @@ class Promotion(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     unit_price = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(1)])
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey('Collection', on_delete=models.PROTECT)
+    collection = models.ForeignKey('Collection', on_delete=models.PROTECT, related_name="products")
     promotions = models.ManyToManyField(Promotion, blank=True)
 
     def __str__(self):
@@ -65,7 +65,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="orderitems")
     quantity = models.PositiveSmallIntegerField()
     unit_prize = models.DecimalField(max_digits=6, decimal_places=2)
 

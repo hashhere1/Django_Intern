@@ -357,3 +357,109 @@ Implements a basic storefront API to manage products and collections with CRUD o
 - Returns proper HTTP codes and messages for invalid actions  
   (e.g., deleting a product with orders or a collection with products).
 ---
+## Date 12th August, 2025
+## Tasks Performed Today
+
+### 1. Worked with **Generic Views** in Django REST Framework
+- **`ListCreateAPIView`**  
+  - Combined two operations into one view:
+    - **List** (`GET`): Retrieve and return a list of all objects from the database.
+    - **Create** (`POST`): Accept JSON input, validate it using a serializer, and store it as a new database entry.
+  - Useful for resources where you often need both listing and creation from the same endpoint.
+  
+- **`RetrieveUpdateDestroyAPIView`**  
+  - Handles single object operations:
+    - **Retrieve** (`GET`): Return the details of one resource.
+    - **Update** (`PUT` / `PATCH`): Modify existing data.
+    - **Destroy** (`DELETE`): Remove a resource from the database.
+  - Helps avoid repetitive boilerplate code by combining three actions in one class.
+
+- **`ModelViewSet`**  
+  - Provides **all CRUD operations** automatically when paired with DRF routers.
+  - Eliminates the need to define individual views for listing, creating, retrieving, updating, and deleting objects.
+
+---
+
+### 2. Implemented **Routers**
+- Used **SimpleRouter** and **Nested Routers** to auto-generate URL patterns for viewsets.
+- Reduced the amount of manual URL configuration in `urls.py`.
+- Nested routers allowed creation of endpoints such as:
+  - `/products/{product_id}/reviews/` → reviews linked to a specific product.
+
+---
+
+### 3. Built **Serializers**
+- Created serializers in `serializers.py` for multiple models:
+  - **ProductSerializer** — converts `Product` model instances to JSON and validates product data when creating/updating.
+  - **ReviewSerializer** — handles serialization for reviews, including mapping a product foreign key.
+  - **CartSerializer** & **CartItemSerializer** — serialize cart data along with related cart items and their products.
+- Used nested serializers to include related objects in responses (e.g., showing product details inside a cart item).
+- Added `read_only` fields for IDs to ensure they are not editable by API users.
+
+---
+
+### 4. Created **View Functions / Viewsets**
+- Implemented class-based viewsets (`ModelViewSet`, `GenericViewSet` with mixins) to handle API logic.
+- Linked each viewset to its corresponding serializer and queryset.
+- Configured `lookup_field` for UUID-based models like `Cart` to support URLs such as:
+- Used `CreateModelMixin`, `RetrieveModelMixin`, and others as needed for different endpoints.
+
+---
+
+### 5. Built **Reviews API**
+- Designed API endpoints to:
+- List all reviews for a given product.
+- Create a new review for a specific product.
+- Used nested routing so reviews are tied directly to a product ID.
+- Implemented serializer context to pass `product_id` into the `ReviewSerializer` during creation.
+
+---
+
+### 6. Applied **Data Filtering**
+- Used `DjangoFilterBackend` to filter results based on query parameters.
+- Example:  
+- Filtering made the API more flexible and allowed users to retrieve targeted subsets of data.
+
+---
+
+### 7. Implemented **Sorting**
+- Enabled ordering via query parameters using DRF’s `OrderingFilter`.
+- Examples:
+- Allowed multiple ordering criteria (e.g., `ordering=price,title`).
+
+---
+
+### 8. Learned about **GUID / UUID**
+- **GUID**: Globally Unique Identifier — ensures each value is unique across time and space.
+- Implemented using Django’s `UUIDField` for models like `Cart`.
+- Benefits:
+- Secure and harder to guess than integer IDs.
+- Prevents collisions when merging data from multiple sources.
+- Example:
+
+---
+
+### 9. Built **Cart API** with CRUD Operations
+- Endpoints:
+- **Create** (`POST /carts/`) — generates a new empty cart.
+- **Retrieve** (`GET /carts/{uuid}/`) — returns cart details with all items.
+- **Update** (`PATCH /carts/{uuid}/`) — modify cart items.
+- **Delete** (`DELETE /carts/{uuid}/`) — remove the entire cart.
+- Added related cart item management:
+- Add new products to the cart.
+- Update quantity of existing cart items.
+- Remove items from the cart.
+
+---
+
+### 10. Calculated **Total Price** of Cart
+- Added a calculated field in the serializer to sum the price of all cart items:
+- Ensured this calculation is done dynamically so it always reflects the current cart contents.
+- Returned the total price in the API response to improve user experience.
+
+---
+
+### 11. Debugging & Fixes
+- Fixed `404` error for retrieving carts by adding `RetrieveModelMixin` to `CartViewSet`.
+- Fixed `'Product' object is not iterable` error by removing `many=True` from `ProductSerializer` inside `CartItemSerializer` because each cart item references a **single** product.
+---

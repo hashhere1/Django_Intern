@@ -463,3 +463,98 @@ Implements a basic storefront API to manage products and collections with CRUD o
 - Fixed `404` error for retrieving carts by adding `RetrieveModelMixin` to `CartViewSet`.
 - Fixed `'Product' object is not iterable` error by removing `many=True` from `ProductSerializer` inside `CartItemSerializer` because each cart item references a **single** product.
 ---
+## Date 13th August, 2025
+# Django Authentication and Authorization Concepts
+
+## 1. Django Authentication System
+The Django authentication system is a built-in framework that handles user accounts, groups, permissions, and cookie-based user sessions. It provides functionalities such as login, logout, password management, and user authentication checks.  
+It includes:
+- **User Model** for storing account details
+- **Authentication backends** for validating credentials
+- **Permission system** for access control
+
+---
+
+## 2. Customizing the User Model
+Customizing the User Model involves replacing Django’s default `User` model with a custom one to better suit application needs.  
+This is typically done by subclassing `AbstractUser` or `AbstractBaseUser` and adding or removing fields as required.  
+It is recommended to define a custom user model **at the start of the project** to avoid migration complexity later.
+
+---
+
+## 3. Extending the User Model
+Extending the User Model means keeping Django’s default `User` model but linking it to a separate model (often called `Profile`) via a **OneToOneField**.  
+This approach is used when you want to store additional information about a user without modifying the existing authentication model.  
+
+Example:
+```python
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField()
+```
+
+---
+
+## 4. Groups and Permissions
+Django provides a built-in permission system that associates users with actions they can perform.  
+- **Groups**: Collections of permissions that can be applied to multiple users at once.  
+- **Permissions**: Rules that determine whether a user can perform a given action (e.g., `add_product`, `delete_order`).  
+
+Groups simplify permission management for large sets of users.
+
+---
+
+## 5. Securing Endpoints using Permissions
+Permissions can be used to restrict access to specific API endpoints or views.  
+In Django REST Framework (DRF), permission classes (e.g., `IsAuthenticated`, `IsAdminUser`) determine whether the request should be granted or denied.  
+Custom permissions can be created for complex access logic.
+
+Example:
+```python
+from rest_framework.permissions import BasePermission
+
+class IsOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.owner == request.user
+```
+
+---
+
+## 6. Token-Based Authentication
+Token-based authentication is a method where each authenticated user is assigned a token, which must be included in the header of subsequent requests.  
+In DRF, the server issues the token after login, and the client stores and sends it with each request:
+```http
+Authorization: Token your_token_here
+```
+It is stateless, meaning the server does not keep session data for tokens.
+
+---
+
+## 7. Using Djoser Library
+[Djoser](https://djoser.readthedocs.io/) is a Django REST Framework library that provides a set of REST endpoints for user authentication and management.  
+It handles:
+- User registration
+- Login and logout
+- Password reset and change
+- Token and JWT authentication support  
+
+It saves development time by providing production-ready authentication endpoints.
+
+---
+
+## 8. Building Profile API
+A Profile API allows clients to retrieve and update the additional user profile information stored in the database.  
+It usually works with an extended user model and supports:
+- **GET** → Retrieve profile details
+- **PUT/PATCH** → Update profile details
+- **Permissions** → Ensure only the profile owner can modify their data
+
+Example (DRF view):
+```python
+class ProfileView(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
+```

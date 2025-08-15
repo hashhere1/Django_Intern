@@ -558,4 +558,112 @@ class ProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user.profile
 ```
-....
+---
+## Date- 15th August,2025
+# Tasks Performed
+
+## 1. Getting Current User Profile
+
+**Definition:** The current user profile refers to the data of the user who is currently authenticated in the system.
+
+* Implemented functionality to retrieve the profile information of the logged-in user.
+* Used Django REST Framework’s `request.user` object to identify the authenticated user.
+* Created a dedicated API endpoint (`/users/me/` or similar) to fetch the user’s profile.
+* Ensured that sensitive information (like passwords) is never exposed in the API response.
+* Added serialization to format the user data properly before sending it as a response.
+
+**Example fields returned:**
+
+* `username`
+* `email`
+* `first_name`
+* `last_name`
+* `date_joined`
+
+---
+
+## 2. Applying Permissions
+
+**Definition:** Permissions determine whether a user can perform a certain action on a resource (e.g., view, edit, delete).
+
+* Applied Django REST Framework built-in permissions to secure endpoints.
+* Common permissions used:
+
+  * `IsAuthenticated`: Allows access only to authenticated users.
+  * `IsAdminUser`: Allows access only to admin users.
+* Ensured that unauthorized users cannot access sensitive endpoints.
+* Combined multiple permissions to create layered security rules.
+
+---
+
+## 3. Created Custom Permission Classes
+
+**Definition:** Custom permissions are user-defined rules to enforce access control beyond the built-in options.
+
+* Created custom permission classes to implement project-specific access rules.
+* Examples:
+
+  * Only allow a user to update their own profile.
+  * Restrict order modifications to the order owner.
+* Integrated the custom permission classes into the viewsets and API views.
+* Custom permissions inherit from `BasePermission` and implement the `has_permission` and/or `has_object_permission` methods.
+
+**Example:**
+
+```python
+class IsOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user
+```
+
+---
+
+## 4. Building Orders API
+
+**Definition:** Orders API allows the creation, retrieval, update, and deletion (CRUD) of customer orders in an e-commerce system.
+
+* Developed API endpoints for managing orders.
+* Linked orders to authenticated users to ensure proper ownership.
+* Implemented CRUD operations:
+
+  * **Create:** Place a new order.
+  * **Retrieve:** View order details.
+  * **Update:** Modify order information (e.g., status).
+  * **Delete:** Remove orders (restricted to certain users).
+* Used serializers to validate and structure order data.
+* Included order-related details like items, quantity, total price, and order status.
+
+---
+
+## 5. Registered Orders URL Path and Checked Endpoints
+
+* Added URL routes for Orders API in Django `urls.py`.
+* Registered viewsets using DRF’s `DefaultRouter` for automatic route generation.
+* Verified endpoints using tools like Postman or Django’s API browser.
+* Checked that:
+
+  * Correct HTTP methods are available (GET, POST, PUT/PATCH, DELETE).
+  * Permissions are enforced properly for each endpoint.
+  * Responses are consistent and return proper status codes.
+
+**Example URL configuration:**
+
+```python
+from rest_framework.routers import DefaultRouter
+from .views import OrderViewSet
+
+router = DefaultRouter()
+router.register(r'orders', OrderViewSet, basename='order')
+urlpatterns = router.urls
+```
+
+---
+
+**Summary:**
+Through these tasks, the system now:
+
+* Can return the current user’s profile securely.
+* Applies both built-in and custom permissions.
+* Provides a fully functional Orders API.
+* Ensures that only authorized users can access or modify data.
+---

@@ -667,3 +667,61 @@ Through these tasks, the system now:
 * Provides a fully functional Orders API.
 * Ensures that only authorized users can access or modify data.
 ---
+## Date- 18th August,2025
+#  Tasks Performed Today
+
+## 1. Applying Permissions on Order API
+- Implemented **authentication and permission checks** on the `OrderViewSet`.  
+- Ensured that:
+  - **Staff users** can access and manage all orders.  
+  - **Regular users** can only access orders linked to their own customer account.  
+- Used `IsAuthenticated` permission class for security.
+
+**Definition – Permissions:**  
+Permissions in Django REST Framework are used to control **who can access certain views or APIs**.  
+Example: Only authenticated users can create an order, but only staff can view all orders.
+
+---
+
+## 2. Creating Order Items
+- Added logic in the `CreateOrderSerializer` to generate **order items** whenever a new order is created.  
+- Mapped each `CartItem` to an `OrderItem`, ensuring product, unit price, and quantity are correctly transferred.
+
+**Definition – Order Item:**  
+An `OrderItem` represents a single product inside an order.  
+It usually contains:
+- The product reference  
+- The quantity ordered  
+- The price at the time of order  
+
+---
+
+## 3. Implemented `bulk_create`
+- Used `OrderItem.objects.bulk_create()` to insert multiple order items into the database in a **single query**.  
+- Improved efficiency compared to creating items one by one.  
+
+**Definition – bulk_create:**  
+`bulk_create` is a Django ORM method that allows creating **multiple rows in the database in a single operation**, which is faster and more efficient than multiple `.save()` calls.
+
+---
+
+## 4. Data Validation
+- Added **validation** for `cart_id` input in the serializer.  
+- Ensured only valid cart IDs are accepted, preventing errors and invalid data from being processed.  
+- Verified that orders can only be created if a valid cart exists with items.
+
+**Definition – Data Validation:**  
+Data validation ensures that **only correct and clean data** is accepted before saving to the database.  
+Example: Checking if `cart_id` is a valid UUID and whether the cart exists.
+
+---
+
+## 5. Signals
+- Worked with **Django signals** (e.g., `post_save`, `pre_save`) to automate model-related actions.  
+- Moved business logic outside of views/serializers for cleaner and more maintainable code.  
+- Example use cases: updating related models automatically when an order or customer is created.
+
+**Definition – Signals:**  
+Signals are a way in Django to **listen for certain actions (events)** (like saving, deleting, or creating an object) and run specific code automatically when those events happen.  
+Example: When an order is created, you can automatically send a notification or clear the cart.
+---

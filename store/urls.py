@@ -1,9 +1,10 @@
+from email.mime import base
 from django.urls import path
-from rest_framework.routers import SimpleRouter
+from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 from . import views
 
-router = SimpleRouter()
+router = DefaultRouter()
 
 router.register('products', views.ProductViewSet, basename='products')
 router.register('collections', views.CollectionViewSet)
@@ -13,6 +14,7 @@ router.register("orders", views.OrderViewSet, basename="orders")
 
 product_router = routers.NestedDefaultRouter(router, 'products', lookup='product')
 product_router.register('reviews', views.ReviewViewSet, basename='product-reviews')
+product_router.register('images', views.ProductImageViewSet, basename='product-images')
 
 cart_router = routers.NestedDefaultRouter(router, "carts", lookup='cart')
 cart_router.register('items', views.CartItemViewSet, basename='cart-items')

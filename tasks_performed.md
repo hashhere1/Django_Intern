@@ -725,3 +725,86 @@ Example: Checking if `cart_id` is a valid UUID and whether the cart exists.
 Signals are a way in Django to **listen for certain actions (events)** (like saving, deleting, or creating an object) and run specific code automatically when those events happen.  
 Example: When an order is created, you can automatically send a notification or clear the cart.
 ---
+## Date- 19th August,2025
+# Tasks Performed Today
+
+## 1. Creating Signal Handlers
+- Implemented **Django signals** to automatically perform actions when certain events occur (e.g., creating a `Customer` record whenever a new `User` is created).
+- Signals help in decoupling logic and keeping the code clean.
+
+**Definition**:  
+A **signal** in Django allows certain senders to notify a set of receivers when an action has taken place.  
+Example: `post_save`, `pre_delete`.
+
+---
+
+## 2. Managing Media Files
+- Configured Django to handle **user-uploaded content** (images, documents, etc.).
+- Defined `MEDIA_URL` and `MEDIA_ROOT` in `settings.py` for storing and serving media files.
+
+**Key Difference**:  
+- `STATICFILES` → for CSS, JS, images used in frontend.  
+- `MEDIA` → for files uploaded by users (e.g., profile pictures, product images).
+
+---
+
+## 3. Using Static for Adding Media URLs
+- Added media URL patterns in `urls.py` using:
+
+```python
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+- This ensures uploaded files are accessible via browser during development.
+
+---
+
+## 4. Adding Media Files to Products API
+- Extended the `Product` model to support **media file uploads** (like product images).
+- Updated serializers to include media field so that APIs return file paths/URLs.
+
+---
+
+## 5. Building API to Upload Images
+- Created an **Image Upload API** that allows uploading files related to `Products`.
+- Implemented `FileField` or `ImageField` in the model for handling images.
+- Allowed POST requests to attach files with products.
+
+---
+
+## 6. Returning Images from API
+- Modified serializers to return **image URLs** instead of just file paths.
+- This makes images accessible directly via API response, e.g.:
+
+```json
+{
+  "id": 1,
+  "name": "Sample Product",
+  "image": "http://127.0.0.1:8000/media/products/sample.jpg"
+}
+```
+
+---
+
+## 7. Validating Uploaded Files
+- Added **file size validation** to restrict large uploads.
+- Example validator:
+
+```python
+max_size_kb = 50
+if file.size > max_size_kb * 1024:
+    raise ValidationError(f"Files cannot be larger than {max_size_kb}KB!")
+```
+
+- Prevents users from uploading oversized files.
+
+---
+
+## 8. Managing Images in Admin
+- Configured **Django Admin** to display uploaded product images.
+- This helps in easily verifying uploaded content and managing product visuals.
+
+---

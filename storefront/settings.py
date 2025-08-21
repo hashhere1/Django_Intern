@@ -168,3 +168,23 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 2525
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'aleemhassaan70@gmail.com'
+# EMAIL_HOST_PASSWORD = 'lrak ooem krvx pune'
+# EMAIL_USE_TLS = True
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
+CELERY_BEAT_SCHEDULE = {
+    'notify_customers': {
+        'task': 'playground.tasks.notify_customers',
+        'schedule': 5,
+        'args': ['Hello World'],
+    }
+}

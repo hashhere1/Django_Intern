@@ -808,3 +808,129 @@ if file.size > max_size_kb * 1024:
 - This helps in easily verifying uploaded content and managing product visuals.
 
 ---
+## Date- 21th August, 2025
+# Tasks Performed Today
+
+## 1. Setting up SMTP Server
+An **SMTP (Simple Mail Transfer Protocol) server** is used to send emails over the internet.  
+- It receives emails from applications and delivers them to recipients.  
+- In development, you can use a **fake SMTP server** like [smtp4dev] to capture outgoing emails without actually sending them.  
+- In production, real SMTP providers like **Gmail, AWS SES, SendGrid, Mailgun** are used.  
+
+---
+
+## 2. Configuring Email Backends
+Django uses **Email Backends** to define how emails are sent.  
+You configure them in `settings.py`.  
+
+Example (SMTP Backend):
+```python
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "your_email@gmail.com"
+EMAIL_HOST_PASSWORD = "your_password"
+EMAIL_USE_TLS = True
+```
+
+**Other backends:**
+- `django.core.mail.backends.console.EmailBackend` → Prints emails in the console (development).  
+- `django.core.mail.backends.filebased.EmailBackend` → Saves emails to files.  
+- `django.core.mail.backends.locmem.EmailBackend` → Stores emails in memory (for testing).  
+
+---
+
+## 3. Sending Emails in Django
+Django provides different methods for sending emails:
+
+- **`send_mail()`**  
+  Sends a simple email with subject, message, sender, and recipients.  
+
+- **`mail_admins()`**  
+  Sends emails directly to site admins defined in `ADMINS` setting. Useful for error notifications.  
+
+- **`EmailMessage` Class**  
+  Used for advanced email sending, supports attachments, HTML messages, and multiple recipients.  
+
+Example:
+```python
+from django.core.mail import send_mail, mail_admins, EmailMessage
+
+# Simple email
+send_mail("Subject", "Message body", "from@example.com", ["to@example.com"])
+
+# Send to admins
+mail_admins("Critical Error", "Something went wrong!")
+
+# Advanced email
+email = EmailMessage(
+    "Subject",
+    "Here is the message",
+    "from@example.com",
+    ["to@example.com"]
+)
+email.attach("file.txt", "File content here", "text/plain")
+email.send()
+```
+
+---
+
+## 4. Celery and Redis
+**Celery** is a task queue for handling asynchronous tasks (e.g., sending emails in the background).  
+- **Redis** is often used as the **message broker** (a queue system that Celery uses to manage tasks).  
+- This prevents blocking the main app while performing heavy tasks.  
+
+Example (basic configuration in `settings.py`):
+```python
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+```
+
+---
+
+## 5. Message Broker
+A **Message Broker** is middleware that allows different services to communicate by sending messages to a queue.  
+- Celery supports multiple brokers: Redis, RabbitMQ, Amazon SQS, etc.  
+- Example flow: Django app → Celery task → Redis queue → Celery worker executes task.  
+
+---
+
+## 6. Scheduling Periodic Tasks
+Celery can schedule tasks to run periodically (like a cron job).  
+- Example: Sending weekly reports every Monday at 8 AM.  
+
+Example using **Celery Beat**:
+```python
+from celery import Celery
+from celery.schedules import crontab
+
+app = Celery("storefront")
+
+app.conf.beat_schedule = {
+    "send-report-every-monday": {
+        "task": "storefront.tasks.send_report",
+        "schedule": crontab(hour=8, minute=0, day_of_week=1),
+    },
+}
+```
+
+---
+
+## 7. Automated Testing
+Automated tests ensure your application works as expected.  
+Django + Pytest can be used for:  
+- **Unit Tests** → Testing small pieces of code.  
+- **Integration Tests** → Testing how different modules work together.  
+- **End-to-End Tests** → Testing the whole workflow (e.g., API requests).  
+
+Example:
+```python
+import pytest
+from rest_framework.test import APIClient
+from rest_framework import status
+
+@pytest.mark.django_db
+def test_if_user_is_anonymous_returns_401():
+    client = APIClient()
+    response = client.post("/store/collections/", {"title": "a"})
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+```

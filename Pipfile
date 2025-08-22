@@ -64,6 +64,7 @@ wcwidth = "==0.2.13"
 
 [dev-packages]
 pytest-django = "*"
+model-bakery = "*"
 
 [requires]
 python_version = "3.10"

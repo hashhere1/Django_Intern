@@ -934,3 +934,67 @@ def test_if_user_is_anonymous_returns_401():
     response = client.post("/store/collections/", {"title": "a"})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 ```
+## Date- August 22,2025
+# Tasks Performed
+
+## 1. Created Test Cases for `CollectionViewSet`
+- **What I did**:  
+  - Wrote tests for retrieving a collection.  
+  - Wrote tests for creating a collection (authenticated vs anonymous).  
+  - Wrote tests for updating a collection.  
+  - Wrote tests for deleting a collection with/without products.  
+
+- **Definition**:  
+  - **Test Case**: A specific scenario to verify that a piece of functionality works as expected.  
+  - **Collection**: A model that groups products together.  
+
+---
+
+## 2. Created Test Cases for `ProductViewSet`
+- **What I did**:  
+  - Wrote tests for retrieving a product.  
+  - Wrote tests for creating a product (authenticated vs anonymous).  
+  - Wrote tests for updating a product.  
+  - Wrote tests for deleting a product with/without order items.  
+
+- **Definition**:  
+  - **Product**: An item in the store with fields like `title`, `slug`, `unit_price`, `inventory`.  
+  - **Order Item**: A line in an order that refers to a product and its quantity.  
+
+---
+
+## 3. Fixed the `authenticate` Fixture
+- **What I did**:  
+  - Initially, the fixture was returning `None`.  
+  - Fixed it so that it creates a `User`, creates a related `Customer`, and authenticates API requests.  
+  - Returned the `user` so tests can access `user.customer`.  
+
+- **Definition**:  
+  - **Fixture (Pytest)**: A reusable piece of setup code used in tests, such as creating users or authenticating clients.  
+  - **Authentication**: Process of verifying the identity of a user before allowing access to resources.  
+
+---
+
+## 4. Wrote Tests for Error Handling
+- **What I did**:  
+  - Verified that deleting a collection with products returns **400 Bad Request**.  
+  - Verified that deleting a product with order items returns **400 Bad Request**.  
+  - Verified that unauthenticated users cannot create products or collections (returns **401 Unauthorized**).  
+
+- **Definition**:  
+  - **400 Bad Request**: HTTP response status code indicating the request is invalid.  
+  - **401 Unauthorized**: HTTP response status code meaning the user must authenticate first.  
+
+---
+
+## 5. Practiced Database Integrity Handling
+- **What I did**:  
+  - Encountered and fixed `IntegrityError` caused by duplicate `Customer.user_id`.  
+  - Solved it by adjusting the `authenticate` fixture to always create a new user with a customer.  
+
+- **Definition**:  
+  - **IntegrityError**: A database error that occurs when a constraint (like unique fields) is violated.  
+  - **Foreign Key Constraint**: A rule that ensures that a field refers to a valid entry in another table.  
+
+---
+

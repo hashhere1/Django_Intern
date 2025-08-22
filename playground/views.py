@@ -12,7 +12,7 @@ def say_hello(request):
     #         template_name='emails/hello.html',
     #         context={'name': "Hassaan"}
     #     )
-    #     message.send(['hassaan.202202563@gcuf.edu.pk'])
+    #     message.send([''])
     # except BadHeaderError:
     #     pass
     return render(request, "hello.html", {"name": "Hassaan"})

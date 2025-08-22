@@ -1,12 +1,10 @@
 from itertools import product
-from turtle import mode
 from django.contrib import admin
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from uuid import uuid4
 
-from store import permissions
 from store.validators import validate_file_size
 
 class Promotion(models.Model):

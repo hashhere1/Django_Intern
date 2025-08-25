@@ -65,6 +65,8 @@ wcwidth = "==0.2.13"
 [dev-packages]
 pytest-django = "*"
 model-bakery = "*"
+locust = "*"
+django-silk = "*"
 
 [requires]
 python_version = "3.10"

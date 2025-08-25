@@ -1,5 +1,3 @@
-from dataclasses import field
-from pyexpat import model
 from django.db import transaction
 from rest_framework import serializers
 from decimal import Decimal

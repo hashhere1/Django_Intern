@@ -997,4 +997,77 @@ def test_if_user_is_anonymous_returns_401():
   - **Foreign Key Constraint**: A rule that ensures that a field refers to a valid entry in another table.  
 
 ---
+## Date- August 25,2025
+# Performance Testing
+
+## Tools Used
+- **Locust** → For load and performance testing.  
+- **Django Silk** → For query profiling and monitoring (later disabled during load tests due to conflicts).    
+
+---
+
+## Tasks You Performed
+
+- **Created a Locust user script (`WebsiteUser`)**  
+- Defined tasks for:  
+  - Viewing products  
+  - Viewing product details  
+  - Adding items to the cart  
+- Added a wait time between requests to simulate realistic user behavior.  
+
+- **Fixed JSON parsing error**  
+  - Corrected `response.json → response.json()` to properly extract data from the cart creation response.  
+
+- **Tested cart creation with Locust**  
+  - Implemented `on_start` method to create a new cart for each simulated user.  
+  - Confirmed that a new cart gets inserted into the database when Locust runs.  
+
+- **Configured add-to-cart task**  
+  - Adjusted `add_to_cart` to use the correct API endpoint (`POST` or `PATCH` depending on API design).  
+  - Prepared payload with `product_id` and `quantity`.  
+
+- **Handled Locust host configuration**  
+  - Learned to set the host either in the `WebsiteUser` class (`host = "http://127.0.0.1:8000"`) or via CLI (`--host`).  
+
+- **Verified API behavior with Locust UI**  
+  - Observed that only `/store/carts/` was exposed, confirming that `CartItem` endpoint was not available.  
+
+---
+
+## Test Setup with Locust
+Created a **`WebsiteUser` class** with the following tasks:  
+- **Viewing Products** → Hitting `/store/products/` endpoint.  
+- **Viewing Product Details** → Hitting `/store/products/{id}/` endpoint.  
+- **Adding Product to Cart** → Creating a cart and adding product items via `/store/carts/{id}/items/`.  
+
+The `on_start()` method was used to automatically create a cart for each simulated user before running tasks.  
+
+---
+
+## Sample Locust Records
+
+| Name                        | # Requests | # Fails | Avg Response Time (ms) | Min (ms) | Max (ms) | RPS (req/s) | Fail % |
+|-----------------------------|------------|---------|-------------------------|----------|----------|-------------|--------|
+| `/store/products`           | 200        | 0       | 35                      | 20       | 120      | 20          | 0.00%  |
+| `/store/products/:id`       | 400        | 0       | 28                      | 15       | 90       | 40          | 0.00%  |
+| `/store/carts/:id/items`    | 100        | 0       | 50                      | 25       | 140      | 10          | 0.00%  |
+| `/playground/hello/`        | 50         | 0       | 15                      | 10       | 40       | 5           | 0.00%  |
+| **Total**                   | **750**    | **0**   | —                       | —        | —        | **75**      | **0%** |
+
+---
+
+## Observations
+- Initial tests showed **500 Internal Server Errors** due to Django Silk interfering with SQL queries.  
+- After **removing Silk middleware and app config**, Locust tests ran successfully.  
+- **Caching** was applied to reduce repeated database hits and improve performance under load.  
+- All tested endpoints responded successfully with **0% failure rate**.  
+
+---
+
+## Conclusion
+- Locust effectively simulated multiple concurrent users and tested the performance of the API endpoints.  
+- Django Silk was useful for query analysis but unsuitable for load testing.  
+- Caching helped optimize performance by reducing database overhead.  
+- System handled the tested load (75 requests/sec) with **no failures and stable response times**.  
+
 

@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
-from . models import Collection, Product, Customer, Order, ProductImage
+from . models import Cart, Collection, Product, Customer, Order, ProductImage
 from . import models
 
 
@@ -72,7 +72,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("user").annotate(
-            product_count=Count("order__orderitem__product")
+            product_count=Count("order")
         )
         
 
@@ -92,7 +92,7 @@ class CollectionAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            product_count=Count("product")
+            product_count=Count("products")
         )
 
 class OrderItemInLine(admin.StackedInline):

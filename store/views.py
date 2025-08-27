@@ -4,10 +4,10 @@ from store.permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .serializer import CreateOrderSerializer, OrderSerializer, ProductImageSerializer, ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer, CartItemSerializer, AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, UpdateOrderSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from .models import Order, Product, Collection,OrderItem, ProductImage, Review, Cart, CartItem, Customer
 from .filters import ProductFilter
@@ -42,7 +42,7 @@ class CollectionViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         collection = get_object_or_404(Collection.objects.annotate(product_count=Count('products')), pk=kwargs["pk"])   
-        if collection.product_count > 0: # type: ignore
+        if collection.product_count > 0: 
             return Response({'error': 'Cannot delete a collection that contains products.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
 
@@ -56,7 +56,7 @@ class ReviewViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk']}
     
-class CartViewSet(CreateModelMixin, GenericViewSet, RetrieveModelMixin, DestroyModelMixin):
+class CartViewSet(CreateModelMixin, GenericViewSet, RetrieveModelMixin, DestroyModelMixin, ListModelMixin):
     queryset = Cart.objects.prefetch_related('items__product').all()
     serializer_class = CartSerializer
 
@@ -109,7 +109,7 @@ class OrderViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = CreateOrderSerializer(data=request.data, 
-                                           context={"user_id": self.request.user.id}) # type: ignore
+                                           context={"user_id": self.request.user.id}) 
         serializer.is_valid(raise_exception=True)
         order = serializer.save()
         serializer = OrderSerializer(order)
@@ -131,7 +131,7 @@ class OrderViewSet(ModelViewSet):
         if user.is_staff:
             return Order.objects.all()
         
-        customer = Customer.objects.get(user_id=user.id) # type: ignore
+        customer = Customer.objects.get(user_id=user.id) 
         return Order.objects.filter(customer=customer)
     
 

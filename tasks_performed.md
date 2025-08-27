@@ -1006,7 +1006,7 @@ def test_if_user_is_anonymous_returns_401():
 
 ---
 
-## Tasks You Performed
+## Tasks Performed
 
 - **Created a Locust user script (`WebsiteUser`)**  
 - Defined tasks for:  
@@ -1069,5 +1069,53 @@ The `on_start()` method was used to automatically create a cart for each simulat
 - Django Silk was useful for query analysis but unsuitable for load testing.  
 - Caching helped optimize performance by reducing database overhead.  
 - System handled the tested load (75 requests/sec) with **no failures and stable response times**.  
+---
+## Date- August 27,2025
+# Tasks Performed
 
+## 1. Used Low-Level Cache API
 
+**Description:**  
+Implemented caching using Django's low-level cache API to improve the performance of the application. This involves storing frequently accessed data in a cache (like Redis or in-memory cache) to reduce database queries and speed up response times.
+
+**Details:**
+- Imported Django cache API:  
+  ```python
+  from django.core.cache import cache
+  ```
+- Stored data in cache with a key and timeout:  
+  ```python
+  cache.set('key_name', data, timeout=300)  # cache for 5 minutes
+  ```
+- Retrieved data from cache to avoid repeated database hits:  
+  ```python
+  data = cache.get('key_name')
+  ```
+- Deleted cache when data changes to ensure consistency:  
+  ```python
+  cache.delete('key_name')
+  ```
+
+**Benefit:**  
+- Reduced server load  
+- Improved performance  
+- Faster response times for users  
+
+---
+
+## 2. Wrote README.md File for Complete Project
+
+**Description:**  
+Created a comprehensive `README.md` file for the online e-commerce project, documenting the project setup, usage, and features.
+
+**Details:**
+- Added project title and description.  
+- Documented installation instructions: how to clone the repo, set up a virtual environment, install dependencies, and run the server.  
+- Provided features list: product catalog, shopping cart, order management, user authentication, and admin panel.  
+- Included usage instructions: how to test APIs, run the frontend, and perform common actions.  
+- Added technologies used: Django, Django REST Framework, PostgreSQL/SQLite, Redis, and other libraries.  
+- Optionally included screenshots, API endpoints, and contact information for developers.  
+
+**Benefit:**  
+- Helps users and developers understand, install, and use the project easily.  
+- Makes the project more professional and accessible.  

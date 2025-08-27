@@ -4,7 +4,7 @@ from locust import HttpUser, task, between
 class WebsiteUser(HttpUser):
 
     wait_time = between(1, 5)
-    host = "http://127.0.0.1:8000" 
+    host = "http://127.0.0.1:8000"
 
     @task(2)
     def view_products(self):

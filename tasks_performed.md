@@ -68,5 +68,200 @@ Django is built on the **MVC (Model-View-Controller)** pattern, although in Djan
 - django-debug-toolbar (debugging utility)
 
 ---
+## Date: August 5, 2025
+# Task List with Explanations
 
+- **Added one-to-one and one-to-many relationships between different models**  
+  Defined how different models relate to each other using Django’s ORM relationships.  
+  - *One-to-one*: Each instance of a model is linked to exactly one instance of another model.  
+  - *One-to-many*: One model instance can be related to multiple instances of another model (e.g., one Customer has many Orders).
+
+- **Created a new app named _likes_**  
+  Used Django’s `startapp` command to create a separate app for managing likes functionality, keeping the project modular and organized.
+
+- **Created a database in MySQL**  
+  Set up a new MySQL database to store the project’s data.
+
+- **Configured the MySQL database attributes in `settings.py`**  
+  Added database connection settings (like database name, user, password, host, and port) in the Django `settings.py` file to enable communication with the MySQL database.
+
+- **Checked the data using DataGrip**  
+  Used DataGrip, a database management tool, to connect to MySQL and verify the data and schema.
+
+- **Made migrations for the changes**  
+  Ran Django management commands to generate and apply database migrations reflecting the updated models and relationships.
+
+- **Added mock data**  
+  Created sample data to populate the database for testing and development purposes.
+
+  # Django Models Overview
+
+- **Promotion**  
+  Stores promotion details like description and discount.
+
+- **Product**  
+  Represents products with fields like title, price, inventory, linked to one collection and multiple promotions.
+
+- **Customer**  
+  Stores customer info including name, email, phone, birth date, and membership level.
+
+- **Order**  
+  Records customer orders with timestamp and payment status.
+
+- **OrderItem**  
+  Details products and quantities within an order.
+
+- **Address**  
+  Stores customer address; each customer has exactly one address.
+
+- **Collection**  
+  Groups products into categories with an optional featured product.
+
+- **Cart**  
+  Represents a shopping cart with creation time.
+
+- **CartItem**  
+  Items in a cart, linking products and quantities.
+
+### Relationships:
+- One-to-many: Collection → Product, Customer → Order, Order → OrderItem, Cart → CartItem  
+- One-to-one: Customer → Address  
+- Many-to-many: Product ↔ Promotion
+---
+## Date: August 7, 2025
+# Task List with Explanations
+
+## Expressions in Django ORM
+
+Django provides several expression types to allow complex queries directly in the ORM.
+
+### • Value
+Used to represent a literal value in queries, often with annotations.
+
+```python
+from django.db.models import Value
+from django.db.models.functions import Concat
+
+# Example: Add static string in a query
+qs = Author.objects.annotate(full_name=Concat('first_name', Value(' '), 'last_name'))
+```
+
+---
+
+### • F
+`F()` expressions are used to refer to model field values directly in queries, allowing operations without fetching them into Python.
+
+```python
+from django.db.models import F
+
+# Example: Increase all product prices by 10
+Product.objects.update(price=F('price') + 10)
+```
+
+---
+
+### • Func
+`Func` allows use of SQL functions within queries.
+
+```python
+from django.db.models import Func
+
+# Example: UPPER SQL function
+Author.objects.annotate(upper_name=Func(F('name'), function='UPPER'))
+```
+
+---
+
+### • Aggregate (Count, Sum, etc.)
+Used to perform calculations on a queryset.
+
+```python
+from django.db.models import Count, Sum
+
+# Example: Total price of all products
+total = Product.objects.aggregate(Sum('price'))
+
+# Example: Number of orders per user
+User.objects.annotate(order_count=Count('orders'))
+```
+
+---
+
+### • ExpressionWrapper
+Used when combining expressions where a specific output field type must be declared.
+
+```python
+from django.db.models import ExpressionWrapper, FloatField
+
+qs = Product.objects.annotate(
+    discounted_price=ExpressionWrapper(F('price') * 0.9, output_field=FloatField())
+)
+```
+
+---
+
+### • Content-type
+Django provides `ContentType` framework for generic relationships across models.
+
+```python
+from django.contrib.contenttypes.models import ContentType
+
+# Get content type of a model
+content_type = ContentType.objects.get_for_model(MyModel)
+```
+
+---
+
+## CRUD Operations
+
+### Insert
+Creating and saving new records:
+
+```python
+product = Product(title='Shirt', price=500)
+product.save()
+```
+
+Or using `create()`:
+
+```python
+Product.objects.create(title='Pant', price=800)
+```
+
+---
+
+### Update
+Updating existing records:
+
+```python
+Product.objects.filter(id=1).update(price=600)
+```
+
+---
+
+### Delete
+Deleting records:
+
+```python
+Product.objects.get(id=1).delete()
+```
+
+---
+
+## Transaction Logic
+
+Transactions ensure a group of operations are atomic (all or nothing).
+
+```python
+from django.db import transaction
+
+with transaction.atomic():
+    order = Order.objects.create(customer=customer)
+    Payment.objects.create(order=order, amount=500)
+    # Any error here rolls back the whole block
+```
+
+Use `transaction.atomic()` to manage database consistency in critical operations.
+
+---
 

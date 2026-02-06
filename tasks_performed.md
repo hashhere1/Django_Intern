@@ -68,5 +68,64 @@ Django is built on the **MVC (Model-View-Controller)** pattern, although in Djan
 - django-debug-toolbar (debugging utility)
 
 ---
+## Date: August 5, 2025
+# Task List with Explanations
+
+- **Added one-to-one and one-to-many relationships between different models**  
+  Defined how different models relate to each other using Django’s ORM relationships.  
+  - *One-to-one*: Each instance of a model is linked to exactly one instance of another model.  
+  - *One-to-many*: One model instance can be related to multiple instances of another model (e.g., one Customer has many Orders).
+
+- **Created a new app named _likes_**  
+  Used Django’s `startapp` command to create a separate app for managing likes functionality, keeping the project modular and organized.
+
+- **Created a database in MySQL**  
+  Set up a new MySQL database to store the project’s data.
+
+- **Configured the MySQL database attributes in `settings.py`**  
+  Added database connection settings (like database name, user, password, host, and port) in the Django `settings.py` file to enable communication with the MySQL database.
+
+- **Checked the data using DataGrip**  
+  Used DataGrip, a database management tool, to connect to MySQL and verify the data and schema.
+
+- **Made migrations for the changes**  
+  Ran Django management commands to generate and apply database migrations reflecting the updated models and relationships.
+
+- **Added mock data**  
+  Created sample data to populate the database for testing and development purposes.
+
+  # Django Models Overview
+
+- **Promotion**  
+  Stores promotion details like description and discount.
+
+- **Product**  
+  Represents products with fields like title, price, inventory, linked to one collection and multiple promotions.
+
+- **Customer**  
+  Stores customer info including name, email, phone, birth date, and membership level.
+
+- **Order**  
+  Records customer orders with timestamp and payment status.
+
+- **OrderItem**  
+  Details products and quantities within an order.
+
+- **Address**  
+  Stores customer address; each customer has exactly one address.
+
+- **Collection**  
+  Groups products into categories with an optional featured product.
+
+- **Cart**  
+  Represents a shopping cart with creation time.
+
+- **CartItem**  
+  Items in a cart, linking products and quantities.
+
+### Relationships:
+- One-to-many: Collection → Product, Customer → Order, Order → OrderItem, Cart → CartItem  
+- One-to-one: Customer → Address  
+- Many-to-many: Product ↔ Promotion
 
 
